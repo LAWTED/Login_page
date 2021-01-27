@@ -18,25 +18,29 @@
     export default {
         methods: {
             login () {
+            const url='/api/validate'
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
-                    if (this.user.name === 'admin' && this.user.pass === '123') { 
-                        // dispatch采用Promise链式调用                         
-                        this.$store.dispatch('login', this.user).then(() => {
-                            this.$notify({
-                                type: 'success',
-                                message: '欢迎你,' + this.user.name + '!',
-                                duration: 3000
-                            })
-                            this.$router.replace('/')
-                        })
-                    } else {
-                        this.$message({
-                            type: 'error',
-                            message: '用户名或密码错误',
-                            showClose: true
-                        })
-                    }
+                    this.$axios.post(url,this.user).then(
+                        res=>{
+                            if(res.data){                      
+                                    this.$store.dispatch('login', this.user).then(() => {
+                                    this.$notify({
+                                    type: 'success',
+                                    message: '欢迎你,' + this.user.name + '!',
+                                    duration: 3000
+                                    })
+                                    this.$router.replace('/')
+                                })
+                            } else {
+                                this.$message({
+                                type: 'error',
+                                message: '用户名或密码错误',
+                                showClose: true
+                                })
+                            }
+                            }
+                    )
                 }
                 else {
                     return false
